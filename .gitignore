@@ -1,0 +1,11 @@
+.env
+.venv
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+
+# Node
+node_modules/
+ai-infra-scribe/node_modules/
+ai-infra-scribe/dist/

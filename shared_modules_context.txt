@@ -1,0 +1,141 @@
+====================================================================
+GOVERNED SHARED TERRAFORM MODULES
+====================================================================
+
+====================================================================
+MODULE: CLOUD RUN SERVICE
+====================================================================
+
+REPOSITORY: terraform-cloud-run-module
+SOURCE: git::https://github.com/ChannalKishor/terraform-cloud-run-module.git?ref=main
+
+IMPLEMENTATION:
+--------------------------------------------------------------------
+
+variable "serviceName" { type = string }
+
+variable "containerImage" {
+  type        = string
+  description = "The full URI of the container image (e.g. gcr.io/project/image:tag)."
+}
+
+variable "maxInstanceCount" {
+  type        = number
+  default     = 10
+  description = "Maximum number of instances to scale up to."
+}
+
+variable "cpuLimit" {
+  type    = string
+  default = "1000m" # 1 CPU
+}
+
+variable "memoryLimit" {
+  type    = string
+  default = "512Mi"
+}
+
+resource "google_cloud_run_v2_service" "service" {
+  name     = var.serviceName
+  location = "us-central1"
+
+  template {
+    scaling {
+      max_instance_count = var.maxInstanceCount
+    }
+    containers {
+      image = var.containerImage
+      resources {
+        limits = {
+          cpu    = var.cpuLimit
+          memory = var.memoryLimit
+        }
+      }
+    }
+  }
+
+  lifecycle {
+    prevent_destroy = false
+  }
+}
+
+
+--------------------------------------------------------------------
+
+====================================================================
+MODULE: CLOUD RUN IAM POLICY
+====================================================================
+
+REPOSITORY: terraform-cloud-run-iam-module
+SOURCE: git::https://github.com/ChannalKishor/terraform-cloud-run-iam-module.git?ref=main
+
+IMPLEMENTATION:
+--------------------------------------------------------------------
+
+# CLOUD RUN SERVICE IAM POLICY
+
+variable "service_name" { type = string }
+variable "region" { type = string }
+variable "member" { type = string }
+variable "environment" { type = string }
+
+resource "google_cloud_run_v2_service_iam_member" "this" {
+  location = var.region
+  name     = var.service_name
+  role     = "roles/run.invoker"
+  member   = var.member
+
+}
+
+
+--------------------------------------------------------------------
+
+====================================================================
+MODULE: BIGQUERY DATASET
+====================================================================
+
+REPOSITORY: terraform-bigquery-module
+SOURCE: git::https://github.com/ChannalKishor/terraform-bigquery-module.git?ref=main
+
+IMPLEMENTATION:
+--------------------------------------------------------------------
+
+variable "datasetId" { type = string }
+
+variable "dataLocation" {
+  type        = string
+  description = "Region for the dataset"
+}
+
+variable "allowUpdate" {
+  type        = bool
+  default     = false
+  description = "Allow dataset contents to be destroyed"
+}
+
+variable "tableExpirationMs" {
+  type        = number
+  default     = 3600000 # 1 hour default for safety/testing
+  description = "Default lifetime of tables in the dataset in milliseconds."
+}
+
+resource "google_bigquery_dataset" "dataset" {
+  dataset_id                  = var.datasetId
+  location                    = var.dataLocation
+  default_table_expiration_ms = var.tableExpirationMs
+  delete_contents_on_destroy  = var.allowUpdate
+}
+
+
+--------------------------------------------------------------------
+
+====================================================================
+LLM GENERATION RULES
+====================================================================
+
+1. These are IMPLEMENTATION MODULES.
+2. You MUST NOT copy resource blocks.
+3. You MUST generate Terraform using ONLY module blocks.
+4. You MUST use the exact SOURCE URL provided.
+5. You MUST preserve version pin (?ref=v1.0.0).
+6. Output ONLY valid Terraform HCL.

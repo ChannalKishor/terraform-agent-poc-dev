@@ -1,0 +1,27 @@
+# fastapi
+# pydantic
+# pydantic-settings
+# python-dotenv
+# google-api-core>=2.0.0
+# vertexai
+# uvicorn
+# google-cloud-aiplatform
+# google-generativeai
+# github
+# python-hcl2
+# requests
+
+
+fastapi
+pydantic
+pydantic-settings
+python-dotenv
+google-adk
+vertexai
+uvicorn
+google-cloud-aiplatform
+google-generativeai
+aiohttp
+PyGithub
+python-hcl2
+requests
