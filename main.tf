@@ -32,3 +32,13 @@ module "CloudRunServiceIamPolicy" {
   member       = "user:test-user@exampl.com"
   environment  = "Development"
 }
+
+module "Name" {
+  source = "git::https://github.com/ChannalKishor/terraform-cloud-run-module.git?ref=main"
+
+  serviceName      = "name"
+  containerImage   = "nginx"
+  maxInstanceCount = 10
+  cpuLimit         = "1000m"
+  memoryLimit      = "512Mi"
+}
