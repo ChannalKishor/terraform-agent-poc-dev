@@ -32,3 +32,12 @@ module "CloudRunServiceIamPolicy" {
   member       = "user:test-user@exampl.com"
   environment  = "Development"
 }
+
+module "Analytics" {
+  source = "git::https://github.com/ChannalKishor/terraform-bigquery-module.git?ref=main"
+
+  datasetId         = "analytics"
+  dataLocation      = "us-central1"
+  allowUpdate       = false
+  tableExpirationMs = 3600000
+}
